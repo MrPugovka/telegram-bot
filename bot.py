@@ -1902,12 +1902,6 @@ WEBHOOK_PATH = "/webhook"
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret")
 PORT = int(os.environ.get("PORT", 8080))
 
-web.run_app(
-    app,
-    host="0.0.0.0",
-    port=PORT
-)
-
 BASE_URL = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("WEBHOOK_HOST", "")
 WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
 
@@ -1925,25 +1919,22 @@ async def on_shutdown(bot: Bot):
     logger.info("Webhook удалён")
 
 def main():
-    """Главная функция запуска бота"""
     app = web.Application()
-    
-    # Создаём обработчик webhook для aiogram 3.x
+
     SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
     ).register(app, path=WEBHOOK_PATH)
-    
-    # Настраиваем приложение
+
     setup_application(app, dp, bot=bot)
-    
-    # Регистрируем startup/shutdown хуки
+
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
-    
-    # Запускаем сервер
+
     web.run_app(app, host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
     main()
+
+
 
