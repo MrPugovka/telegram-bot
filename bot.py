@@ -1900,43 +1900,43 @@ async def replace_execute(callback: CallbackQuery, state: FSMContext):
 #================= ГЛАВНАЯ ФУНКЦИЯ =================
 WEBHOOK_PATH = "/webhook"
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret")
-WEBHOOK_HOST = os.getenv("WEBHOOK_HOST")
-BASE_URL = os.getenv("BASE_URL", "")
+PORT = int(os.environ.get("PORT", 8080))
 
-async def on_startup(dispatcher: Dispatcher, bot: Bot):
+BASE_URL = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("WEBHOOK_HOST", "")
+WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
+
+async def on_startup(bot: Bot):
     """Установка webhook при запуске"""
-    if WEBHOOK_HOST:
-        webhook_url = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
-        await bot.set_webhook(webhook_url, secret_token=WEBHOOK_SECRET)
-        logger.info(f"Webhook установлен: {webhook_url}")
+    if WEBHOOK_URL:
+        await bot.set_webhook(WEBHOOK_URL, secret_token=WEBHOOK_SECRET)
+        logger.info(f"Webhook установлен: {WEBHOOK_URL}")
+    else:
+        logger.warning("WEBHOOK_URL не задан, webhook не установлен")
 
-async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
+async def on_shutdown(bot: Bot):
     """Удаление webhook при остановке"""
     await bot.delete_webhook()
-    await bot.session.close()
-    logger.info("Webhook удалён, сессия закрыта")
+    logger.info("Webhook удалён")
 
 def main():
     """Главная функция запуска бота"""
     app = web.Application()
     
     # Создаём обработчик webhook для aiogram 3.x
-    webhook_handler = SimpleRequestHandler(
+    SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
-        secret_token=WEBHOOK_SECRET
-    )
-    webhook_handler.register(app, path=WEBHOOK_PATH)
-    
-    # Регистрируем startup/shutdown хуки через dispatcher signals
-    dp.startup.register(on_startup)
-    dp.shutdown.register(on_shutdown)
+    ).register(app, path=WEBHOOK_PATH)
     
     # Настраиваем приложение
     setup_application(app, dp, bot=bot)
     
+    # Регистрируем startup/shutdown хуки
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+    
     # Запускаем сервер
-    web.run_app(app, host="0.0.0.0", port=int(os.getenv("PORT", 8080)))
+    web.run_app(app, host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
     main()
