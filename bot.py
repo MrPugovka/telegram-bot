@@ -66,8 +66,12 @@ def main():
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
 
-    web.run_app(app, host="0.0.0.0", port=PORT)
+    return app
+
 
 if __name__ == "__main__":
-    main()
+    app = main()
+    web.run_app(app, port=PORT)
+
+
 
