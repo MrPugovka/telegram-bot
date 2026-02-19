@@ -1899,7 +1899,7 @@ async def replace_execute(callback: CallbackQuery, state: FSMContext):
 
 #================= ГЛАВНАЯ ФУНКЦИЯ =================
 WEBHOOK_PATH = "/webhook"
-WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret")
+WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret123")
 PORT = int(os.environ.get("PORT", 8080))
 
 BASE_URL = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("WEBHOOK_HOST", "")
@@ -1937,6 +1937,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
