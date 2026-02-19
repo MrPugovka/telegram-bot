@@ -1924,7 +1924,9 @@ def main():
     SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
+        secret_token=WEBHOOK_SECRET,
     ).register(app, path=WEBHOOK_PATH)
+
 
     setup_application(app, dp, bot=bot)
 
@@ -1935,6 +1937,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
