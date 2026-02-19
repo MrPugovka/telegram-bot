@@ -1,29 +1,22 @@
 import io
 import os
-import pickle
+import json
 import logging
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload, MediaIoBaseDownload
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
+from google.oauth2.service_account import Credentials
 
 SCOPES = ["https://www.googleapis.com/auth/drive"]
 ROOT_FOLDER_ID = "1o3CTuRogOHSd8CxlqdPOMliUYTn7AGkl"
 CONTRACTS_FOLDER_ID = "1fVh7gqQiOeSOjbW68aTQ6Z-t8pm19634"
 
 def get_drive_service():
-    creds = None
-    if os.path.exists("token.pickle"):
-        with open("token.pickle", "rb") as f:
-            creds = pickle.load(f)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open("token.pickle", "wb") as f:
-            pickle.dump(creds, f)
+    """Get Google Drive service using service account credentials from environment."""
+    creds_dict = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
+    creds = Credentials.from_service_account_info(
+        creds_dict,
+        scopes=SCOPES
+    )
     return build("drive", "v3", credentials=creds)
 
 def get_latest_video(folder_name):
