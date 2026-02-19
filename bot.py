@@ -1899,14 +1899,17 @@ async def replace_execute(callback: CallbackQuery, state: FSMContext):
 
 #================= ГЛАВНАЯ ФУНКЦИЯ =================
 WEBHOOK_PATH = "/webhook"
-WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret123")
+WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret")
 PORT = int(os.environ.get("PORT", 8080))
 
 BASE_URL = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("WEBHOOK_HOST", "")
 WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
 
 async def on_startup(bot: Bot):
-    """Установка webhook при запуске"""
+
+    logger.info(f"WEBHOOK_SECRET at startup: {WEBHOOK_SECRET}")
+    logger.info(f"WEBHOOK_URL at startup: {WEBHOOK_URL}")
+
     if WEBHOOK_URL:
         await bot.set_webhook(WEBHOOK_URL, secret_token=WEBHOOK_SECRET)
         logger.info(f"Webhook установлен: {WEBHOOK_URL}")
@@ -1937,6 +1940,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
