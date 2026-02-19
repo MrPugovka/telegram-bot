@@ -1,0 +1,10 @@
+aiogram==3.4.1
+aiohttp==3.9.5
+python-dotenv
+google-api-python-client
+google-auth
+google-auth-oauthlib
+Pillow
+gunicorn
+gspread
+python-dateutil
