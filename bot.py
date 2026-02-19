@@ -1902,8 +1902,17 @@ WEBHOOK_PATH = "/webhook"
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret")
 PORT = int(os.environ.get("PORT", 8080))
 
+# Railway предоставляет RAILWAY_STATIC_URL без https://
 BASE_URL = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("WEBHOOK_HOST", "")
-WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
+if BASE_URL and not BASE_URL.startswith("http"):
+    WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}"
+else:
+    WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
+
+logger.info(f"BOT_TOKEN exists: {bool(os.getenv('BOT_TOKEN'))}")
+logger.info(f"WEBHOOK_SECRET at startup: {WEBHOOK_SECRET}")
+logger.info(f"BASE_URL: {BASE_URL}")
+logger.info(f"WEBHOOK_URL at startup: {WEBHOOK_URL}")
 
 async def on_startup(bot: Bot):
     """Установка webhook при запуске"""
@@ -1935,4 +1944,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
