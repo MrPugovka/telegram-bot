@@ -1902,6 +1902,12 @@ WEBHOOK_PATH = "/webhook"
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "supersecret")
 PORT = int(os.environ.get("PORT", 8080))
 
+web.run_app(
+    app,
+    host="0.0.0.0",
+    port=PORT
+)
+
 BASE_URL = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("WEBHOOK_HOST", "")
 WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
 
@@ -1940,3 +1946,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
