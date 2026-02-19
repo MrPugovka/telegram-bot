@@ -26,7 +26,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 #================= КОНФИГУРАЦИЯ =================
-BOT_TOKEN = os.getenv("BOT_TOKEN")
 SHEET_ID = "1xrCL9RBJHfNQGETgLLvnQtrSErNhQPeYkaXVSKkjSQo"
 CACHE_TTL = 30
 MAX_MSG_CHARS = 3800
@@ -1922,6 +1921,15 @@ async def on_shutdown(bot: Bot):
     logger.info("Webhook удалён")
 
 def main():
+    BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+    bot = Bot(
+        token=BOT_TOKEN,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+    )
+
+    dp = Dispatcher()
+
     app = web.Application()
 
     SimpleRequestHandler(
@@ -1929,7 +1937,6 @@ def main():
         bot=bot,
         secret_token=WEBHOOK_SECRET,
     ).register(app, path=WEBHOOK_PATH)
-
 
     setup_application(app, dp, bot=bot)
 
@@ -1940,6 +1947,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
