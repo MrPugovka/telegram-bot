@@ -11,11 +11,11 @@ SCOPES = [
 SPREADSHEET_ID = "1xrCL9RBJHfNQGETgLLvnQtrSErNhQPeYkaXVSKkjSQo"
 
 def get_sheet():
-    creds_dict = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
-    creds = Credentials.from_service_account_info(
-        creds_dict,
-        scopes=SCOPES
-    )
+    raw_creds = os.getenv("GOOGLE_CREDENTIALS")
+    print("GOOGLE_CREDENTIALS exists:", bool(raw_creds))
+    print("Length:", len(raw_creds) if raw_creds else 0)
+    creds_dict = json.loads(raw_creds)
+
 
     client = gspread.authorize(creds)
     spreadsheet = client.open_by_key(SPREADSHEET_ID)
@@ -199,3 +199,4 @@ def update_reports_extend(rental_sum):
     if monthly_sum_col is not None:
         current_monthly_sum = int(sheet.cell(today_row, monthly_sum_col + 1).value or 0)
         sheet.update_cell(today_row, monthly_sum_col + 1, current_monthly_sum + rental_sum)
+
