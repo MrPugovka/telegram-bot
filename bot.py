@@ -69,26 +69,8 @@ def main():
 
     return app
 
-import asyncio
-
-
-async def start():
-    real_port = int(os.environ["PORT"])
-    logger.info(f"Starting app on PORT: {real_port}")
-
-    app = main()
-
-    runner = web.AppRunner(app)
-    await runner.setup()
-
-    site = web.TCPSite(runner, "0.0.0.0", real_port)
-    await site.start()
-
-    logger.info("Server started successfully")
-
-    while True:
-        await asyncio.sleep(3600)
-
-
 if __name__ == "__main__":
-    asyncio.run(start())
+    port = int(os.environ["PORT"])
+    logger.info(f"Starting app on PORT: {port}")
+    app = main()
+    web.run_app(app, host="0.0.0.0", port=port)
