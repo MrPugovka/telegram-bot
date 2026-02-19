@@ -27,8 +27,6 @@ logger = logging.getLogger(__name__)
 
 #================= КОНФИГУРАЦИЯ =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-logger.info(f"BOT_TOKEN exists: {bool(BOT_TOKEN)}")
-
 SHEET_ID = "1xrCL9RBJHfNQGETgLLvnQtrSErNhQPeYkaXVSKkjSQo"
 CACHE_TTL = 30
 MAX_MSG_CHARS = 3800
@@ -1908,12 +1906,9 @@ BASE_URL = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("WEBHOOK_HOST"
 WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
 
 async def on_startup(bot: Bot):
-
-    logger.info(f"WEBHOOK_SECRET at startup: {WEBHOOK_SECRET}")
-    logger.info(f"WEBHOOK_URL at startup: {WEBHOOK_URL}")
-
+    """Установка webhook при запуске"""
     if WEBHOOK_URL:
-        await bot.set_webhook(WEBHOOK_URL, secret_token=WEBHOOK_SECRET)
+        await bot.set_webhook(WEBHOOK_URL)
         logger.info(f"Webhook установлен: {WEBHOOK_URL}")
     else:
         logger.warning("WEBHOOK_URL не задан, webhook не установлен")
@@ -1924,19 +1919,11 @@ async def on_shutdown(bot: Bot):
     logger.info("Webhook удалён")
 
 def main():
-    bot = Bot(
-        token=BOT_TOKEN,
-        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
-    )
-
-    dp = Dispatcher()
-
     app = web.Application()
 
     SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
-        secret_token=WEBHOOK_SECRET,
     ).register(app, path=WEBHOOK_PATH)
 
     setup_application(app, dp, bot=bot)
@@ -1948,11 +1935,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
