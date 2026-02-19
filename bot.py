@@ -51,6 +51,11 @@ async def on_shutdown(bot: Bot):
 def main():
     app = web.Application()
 
+    async def health(request):
+        return web.Response(text="OK")
+
+    app.router.add_get("/", health)
+
     SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
@@ -65,3 +70,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
