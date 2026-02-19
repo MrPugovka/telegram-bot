@@ -16,6 +16,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_PATH = "/webhook"
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 PORT = int(os.environ.get("PORT", 8080))
+logger.info(f"PORT from env: {PORT}")
 BASE_URL = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
 WEBHOOK_URL = f"https://{BASE_URL}{WEBHOOK_PATH}"
 
@@ -70,8 +71,7 @@ def main():
 
 
 if __name__ == "__main__":
+    real_port = int(os.environ["PORT"])
+    logger.info(f"Starting app on PORT: {real_port}")
     app = main()
-    web.run_app(app, port=PORT)
-
-
-
+    web.run_app(app, port=real_port)
